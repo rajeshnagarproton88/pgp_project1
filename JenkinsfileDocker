@@ -1,0 +1,64 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('Docker_Cred')
+        DOCKER_IMAGE = "rnagar88/abctechnologies:latest"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout the code from the Git repository
+                git branch: 'main', url: 'https://github.com/rajeshgithubrepo/pgp_project1.git'
+            }
+        }
+        stage('Build Package') {
+            steps {
+                // Package the .war file
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build Docker image
+                    sh 'docker build -t $DOCKER_IMAGE .'
+                }
+            }
+        }
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                script {
+                    // Log in to Docker Hub
+                    sh 'echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin'
+                    
+                    // Push Docker image to Docker Hub
+                    sh 'docker push $DOCKER_IMAGE'
+                }
+            }
+        }
+        stage('Deploy Docker Container') {
+            steps {
+                script {
+                    // Run Docker container
+                    sh 'docker run -d --name tomcat -p 8082:8080 $DOCKER_IMAGE'
+                }
+            }
+        }
+        stage('Stop Runing test container') {
+            steps {
+                script {
+                    // Run Docker container
+                    sh 'sleep 300'
+                    sh 'docker stop tomcat'
+                }
+            }
+        }
+    }
+    post {
+        always {
+            // Clean up Docker images to save space
+            sh 'docker image prune -f'
+        }
+    }
+}
