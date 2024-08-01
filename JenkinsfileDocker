@@ -51,6 +51,7 @@ pipeline {
                     // Run Docker container
                     sh 'sleep 300'
                     sh 'docker stop tomcat'
+                    sh 'docker rm tomcat'
                 }
             }
         }
