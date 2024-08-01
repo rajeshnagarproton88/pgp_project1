@@ -5,7 +5,7 @@ RUN mkdir /usr/local/tomcat
 ADD https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.91/bin/apache-tomcat-9.0.91.tar.gz  /tmp/apache-tomcat-9.0.91.tar.gz
 RUN cd /tmp &&  tar xvfz apache-tomcat-9.0.91.tar.gz
 RUN cp -Rv /tmp/apache-tomcat-9.0.91/* /usr/local/tomcat/
-ADD ./target/*.war /usr/local/tomcat/webapps/
+ADD ./target/*.war /usr/local/tomcat/webapps/ABCtechnologies.war
 ADD tomcat-users.xml /usr/local/tomcat/conf/
 EXPOSE 8080
 CMD /usr/local/tomcat/bin/catalina.sh run
