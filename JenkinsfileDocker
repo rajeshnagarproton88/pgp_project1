@@ -2,6 +2,7 @@ pipeline {
     agent { 
         label 'agent' 
         }
+    
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('Docker_Cred')
         DOCKER_IMAGE = "rnagar88/abctechnologies:latest"
@@ -13,10 +14,22 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/rajeshgithubrepo/pgp_project1.git'
             }
         }
-        stage('Build Package') {
+        stage('Code Compile') {
             steps {
                 // Package the .war file
-                sh 'mvn clean package -DskipTests'
+                sh 'mvn compile'
+            }
+        }
+               stage('Unit Test') {
+            steps {
+                // Package the .war file
+                sh 'mvn test'
+            }
+        }
+               stage('Code Package') {
+            steps {
+                // Package the .war file
+                sh 'mvn package'
             }
         }
         stage('Build Docker Image') {
