@@ -1,6 +1,7 @@
 pipeline {
-    agent any
-
+    agent { 
+        label 'agent' 
+        }
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('Docker_Cred')
         DOCKER_IMAGE = "rnagar88/abctechnologies:latest"
