@@ -7,6 +7,7 @@ pipeline {
         ansible_playbook = './Project_Task_T4/ansible.yml'
     }
 
+    stages {
         stage('Build') {
             steps {
                 // Get some code from a GitHub repository
@@ -17,6 +18,7 @@ pipeline {
                 echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin
                 '''
             }
+        }
         stage('Invoke Ansible Playbook') {
             steps {
                 // Execute the Ansible playbook with sudo password
