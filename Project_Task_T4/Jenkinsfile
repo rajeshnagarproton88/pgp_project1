@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKER_HUB_CREDENTIALS = credentials('Docker_Cred')
-        ansible_hostfile = '/home/vagrant/pgp_project1/Project_Task_T4/hosts'
-        ansible_playbook = '/Project_Task_T4/ansible.yml'
+        ansible_hostfile = './Project_Task_T4/hosts'
+        ansible_playbook = './Project_Task_T4/ansible.yml'
     }
 
         stage('Build') {
