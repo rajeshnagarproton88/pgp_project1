@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_HUB_CREDENTIALS = credentials('Docker_Cred')
+        ansible_hostfile = '/home/vagrant/pgp_project1/Project_Task_T4/hosts'
+        ansible_playbook = '/Project_Task_T4/ansible.yml'
+    }
+
+        stage('Build') {
+            steps {
+                // Get some code from a GitHub repository
+                git branch: 'main', url: 'https://github.com/rajeshgithubrepo/pgp_project1.git'
+
+                // Login to Docker Hub
+                sh '''
+                echo $DOCKER_HUB_CREDENTIALS_PSW | docker login -u $DOCKER_HUB_CREDENTIALS_USR --password-stdin
+                '''
+            }
+        stage('Invoke Ansible Playbook') {
+            steps {
+                // Execute the Ansible playbook with sudo password
+                sh '''
+                ansible-playbook -i $ansible_hostfile $ansible_playbook
+                '''
+            }
+        }
+    }
+}
