@@ -18,7 +18,7 @@
              image: rnagar88/abctechnologies
              state: started
              ports:
-                 - 1234:8080
+                 - 1234:8090
              #restart: true
           register: out
         - debug:
