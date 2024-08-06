@@ -25,7 +25,7 @@
               var: out
              #- name: Deploying to kubernetes
         - name: Create a Deployment by reading the definition from a local file 
-          command: "kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f ./Project_Task_T4/deployment.yml"    
+          command: "kubectl --kubeconfig=/etc/kubernetes/admin.conf apply -f /home/vagrant/pgp_project1/Project_Task_T4/deployment.yml"    
           register: out
         - debug:
               var: out
