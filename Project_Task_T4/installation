@@ -1,0 +1,83 @@
+Certainly, here's a summary of the master node commands executed within the provided output:
+
+1. **Clone Repository:**
+   ```bash
+   git clone https://github.com/scriptcamp/vagrant-kubeadm-kubernetes.git
+   cd vagrant-kubeadm-kubernetes
+   ```
+   This downloads the Vagrant configuration for setting up a Kubernetes cluster.
+
+2. **Start Virtual Machines:**
+   ```bash
+   vagrant up
+   ```
+   This command initiates the creation and provisioning of three virtual machines: `controlplane`, `node01`, and `node02`.
+
+3. **Install Dependencies:**
+   ```bash
+   sudo apt-get update -y
+   apt-get install -y software-properties-common curl apt-transport-https ca-certificates
+   curl -fsSL https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/cri-o-apt-keyring.gpg
+   echo 'deb [signed-by=/etc/apt/keyrings/cri-o-apt-keyring.gpg] https://pkgs.k8s.io/addons:/cri-o:/prerelease:/main/deb/ /' | sudo tee /etc/apt/sources.list.d/cri-o.list
+   sudo apt-get update -y
+   sudo apt-get install -y cri-o
+   sudo systemctl daemon-reload
+   sudo systemctl enable crio --now
+   ```
+   These commands update package lists, install required packages like `curl`, `apt-transport-https`, `ca-certificates`, and the container runtime `cri-o`.
+
+4. **Configure Kubernetes Repository:**
+   ```bash
+   curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.29/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+   echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.29/deb/ /' | sudo tee /etc/apt/sources.list.d/kubernetes.list
+   sudo apt-get update -y
+   ```
+   This sets up the Kubernetes repository, allowing for the installation of Kubernetes components.
+
+5. **Install Kubernetes Components:**
+   ```bash
+   sudo apt-get install -y kubelet=1.29.0-* kubectl=1.29.0-* kubeadm=1.29.0-*
+   sudo apt-get install -y jq
+   sudo apt-mark hold kubelet kubectl kubeadm cri-o
+   ```
+   Key Kubernetes components like `kubelet`, `kubectl`, and `kubeadm` are installed, along with the `jq` tool for JSON processing. The `apt-mark hold` command prevents these packages from being automatically upgraded.
+
+6. **Initialize Kubernetes Control Plane:**
+   ```bash
+   sudo kubeadm config images pull
+   sudo kubeadm init --apiserver-advertise-address=10.0.0.10 --apiserver-cert-extra-sans=10.0.0.10 --pod-network-cidr=10.244.0.0/16 --node-name controlplane --ignore-preflight-errors Swap
+   mkdir -p $HOME/.kube
+   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+   sudo chown $(id -u):$(id -g) $HOME/.kube/config
+   ```
+   The `kubeadm init` command initializes the Kubernetes control plane on the `controlplane` node. It pulls required container images, generates certificates, and sets up the necessary configuration.
+
+7. **Set up Calico Network:**
+   ```bash
+   curl https://raw.githubusercontent.com/projectcalico/calico/v3.26.0/manifests/calico.yaml -O
+   kubectl apply -f calico.yaml
+   ```
+   This downloads and applies the Calico network configuration, providing networking for the Kubernetes cluster.
+
+8. **Install Metrics Server:**
+   ```bash
+   kubectl apply -f https://raw.githubusercontent.com/techiescamp/kubeadm-scripts/main/manifests/metrics-server.yaml
+   ```
+   The Metrics Server is deployed, enabling the collection of resource metrics within the cluster.
+
+9. **Prepare Join Command:**
+   ```bash
+   kubeadm token create --print-join-command > /vagrant/configs/join.sh
+   ```
+   This generates a `kubeadm join` command that will be used to add worker nodes to the cluster. The command is saved in the `join.sh` file.
+
+10. **Install Kubernetes Dashboard:**
+    ```bash
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+    kubectl -n kubernetes-dashboard get secret/admin-user -o 'go-template={{.data.token | base64decode}}' > /vagrant/configs/token
+    ```
+    This installs the Kubernetes dashboard and saves the admin user token to a file.
+
+These commands collectively set up a Kubernetes cluster with a control plane node (`controlplane`) and prepare it for the addition of worker nodes (`node01` and `node02`).
+
+Let me know if you'd like a breakdown of the commands executed on the worker nodes or have any other questions!
