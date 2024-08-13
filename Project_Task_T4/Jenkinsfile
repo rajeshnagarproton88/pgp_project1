@@ -23,7 +23,7 @@ pipeline {
             steps {
                 // Execute the Ansible playbook with sudo password
                 sh '''
-                ansible-playbook -i $ansible_hostfile $ansible_playbook
+                ansible-playbook -vvvv -i $ansible_hostfile $ansible_playbook
                 '''
             }
         }
