@@ -1,6 +1,6 @@
 - hosts: localhost
   become: yes
-  remote_user: jenkins
+  become_method: sudo
   tasks:
         - name: Build an image and push it to a private repo
           community.docker.docker_image:
