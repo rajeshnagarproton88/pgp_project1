@@ -1,6 +1,5 @@
 - hosts: localhost
   become: yes
-  become_password: jenkins
   tasks:
         - name: Build an image and push it to a private repo
           community.docker.docker_image:
