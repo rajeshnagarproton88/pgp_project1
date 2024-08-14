@@ -5,6 +5,10 @@ pipeline {
         DOCKER_HUB_CREDENTIALS = credentials('Docker_Cred')
         DOCKER_IMAGE = "rnagar88/abctechnologies:latest"
     }
+    tools {
+        // Specify the name of the Maven installation
+        maven 'M3'
+    }
     stages {
         stage('Checkout') {
             steps {
