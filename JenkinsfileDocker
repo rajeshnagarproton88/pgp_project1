@@ -65,7 +65,7 @@ pipeline {
             steps {
                 script {
                     // Run Docker container
-                    sh 'sleep 120'
+                    sh 'sleep 30'
                     sh 'docker stop tomcat'
                     sh 'docker rm tomcat'
                 }
